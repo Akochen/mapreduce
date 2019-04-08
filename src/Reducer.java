@@ -1,10 +1,12 @@
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-public class Reducer {
-	Hashtable<String, ArrayList<Integer>> tableToReduce = new Hashtable<>();
-	int num;
-	String result = "";
+public class Reducer extends Thread{
+	private Hashtable<String, ArrayList<Integer>> tableToReduce = new Hashtable<>();
+	private int num;
+	private String result = "";
+	private String name;
+	private Thread thread;
 	
 	/**
 	 * Creates a reducer
@@ -15,7 +17,7 @@ public class Reducer {
 		// TODO Auto-generated constructor stub
 		tableToReduce = input;
 		this.num = num;
-		generateResult();
+		name = "Reducer: " + num;
 	}
 	
 	/**
@@ -45,4 +47,27 @@ public class Reducer {
 	 * @return The final result string
 	 */
 	public String getResult() {return result;}
+	
+	public void start() {
+		System.out.println("Starting " + name);
+	    if ( thread == null){
+	        thread = new Thread (this, name);
+	        thread.start();
+	   }
+	}
+	
+	/**
+	 * Gets the thread the Reducer creates
+	 * @return the thread
+	 */
+	public Thread getThread() {
+		return thread;
+	}
+	
+	public void run(){ //Runs the thread
+        System.out.println("Running " + name);
+		generateResult();
+		System.out.println(result);
+		System.out.println(name + " has finished.");
+    }
 }

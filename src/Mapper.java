@@ -1,18 +1,19 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 
-public class Mapper {
-	String file;
+public class Mapper extends Thread{
 	private ArrayList<String> list;
 	private Hashtable<String, Integer> table = new Hashtable<String, Integer>();
+	private String name;
+	private Thread thread;
 	
 	/**
 	 * Constructor initializes the initial arraylist to be mapped
 	 * @param arrayList The arraylist to be mapped
 	 */
-	public Mapper(ArrayList<String> arrayList) {
+	public Mapper(ArrayList<String> arrayList, int num) {
 		list = arrayList;
+		name = "Mapper: " + num;
 	}
 	
 	/**
@@ -22,6 +23,7 @@ public class Mapper {
 		for (String string : list) {
 			table.put(string, 0);
 		}
+		System.out.println(name + ": Map\n" + table.toString());
 	}
 	
 	/**
@@ -35,6 +37,7 @@ public class Mapper {
 				table.put(string, 0);
 			}
 		}
+		System.out.println(name + ": Map Count\n" + table.toString());
 	}
 	
 	/**
@@ -102,10 +105,33 @@ public class Mapper {
 	}
 	
 	/**
+	 * Gets the thread the mapper creates
+	 * @return the thread
+	 */
+	public Thread getThread() {
+		return thread;
+	}
+
+	/**
 	 * Gets the hashtable the arraylist was mapped to
 	 * @return the hashtable the arraylist is mapped to
 	 */
 	public Hashtable<String, Integer> getTable() {
 		return table;
 	}
+	
+	public void start() {
+		System.out.println("Starting " + name);
+	    if ( thread == null){
+	        thread = new Thread (this, name);
+	        thread.start();
+	   }
+	}
+	
+	public void run(){ //Runs the thread
+        System.out.println("Running " + name);
+        map();
+        mapCount();
+		System.out.println(name + " has finished.");
+    }
 }

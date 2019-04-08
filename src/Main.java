@@ -1,9 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
@@ -11,35 +7,31 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
+		Counter counters = new Counter();
 		//Import all chapters
 		ArrayList<String> ch1 = readChapter(new File("src/mobydick1.txt"));
 		ArrayList<String> ch2 = readChapter(new File("src/mobydick2.txt"));
 		ArrayList<String> ch3 = readChapter(new File("src/mobydick3.txt"));
 		ArrayList<String> ch4 = readChapter(new File("src/mobydick4.txt"));
 		//Create mappers
-		Mapper ch1Map = new Mapper(ch1);
-		Mapper ch2Map = new Mapper(ch2);
-		Mapper ch3Map = new Mapper(ch3);
-		Mapper ch4Map = new Mapper(ch4);
-		//Map chapters
-		ch1Map.map();
-		ch2Map.map();
-		ch3Map.map();
-		ch4Map.map();
-		//Combine mappers
-		ch1Map.mapCount();
-		ch2Map.mapCount();
-		ch3Map.mapCount();
-		ch4Map.mapCount();
-		//Print out combined mappers
-		System.out.println("Ch1 Word Count");
-		System.out.println(ch1Map.getTable().toString());
-		System.out.println("Ch2 Word Count");
-		System.out.println(ch2Map.getTable().toString());
-		System.out.println("Ch3 Word Count");
-		System.out.println(ch3Map.getTable().toString());
-		System.out.println("Ch4 Word Count");
-		System.out.println(ch4Map.getTable().toString());
+		Mapper ch1Map = new Mapper(ch1, 1);
+		Mapper ch2Map = new Mapper(ch2, 2);
+		Mapper ch3Map = new Mapper(ch3, 3);
+		Mapper ch4Map = new Mapper(ch4, 4);
+		ch1Map.start();
+		ch2Map.start();
+		ch3Map.start();
+		ch4Map.start();
+		try {
+			System.out.println("\nWaiting for mappers to finsih");
+			ch1Map.getThread().join();
+			ch2Map.getThread().join();
+			ch3Map.getThread().join();
+			ch4Map.getThread().join();
+		} catch (InterruptedException e) {
+			System.out.println("\nMapper join error");
+			e.printStackTrace();
+		}
 		//Shuffle maps
 		Hashtable<String, ArrayList<Integer>> shuffledTable = Mapper.shuffle(ch1Map.getTable(), ch2Map.getTable(), ch3Map.getTable(), ch4Map.getTable());
 		//Print out shuffled map
@@ -58,30 +50,16 @@ public class Main {
 		//Create Reducers
 		Reducer reducer1 = new Reducer(oddMap, 1);
 		Reducer reducer2 = new Reducer(evenMap, 2);
-		//Print reduced result
-		String result = "Reducer 1 Output: " + reducer1.getResult() + "\nReducer 2 Output: " + reducer2.getResult();
-		printResult(result);
-		/*
-		System.out.println(reducer1.getResult());
-		System.out.println(reducer2.getResult());
-		*/
-		
-	}
-	/**
-	 * Prints to a file, overwriting what was there previously
-	 * @param result The text to print
-	 */
-	private static void printResult(String result) {
+		reducer1.start();
+		reducer2.start();
 		try {
-			FileWriter writer = new FileWriter("src/output.txt", false);
-			PrintWriter printer = new PrintWriter(writer);
-			printer.print(result);
-			printer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			reducer1.getThread().join();
+			reducer2.getThread().join();
+		} catch (InterruptedException e) {
+			System.out.println("\nReducer join error");
 			e.printStackTrace();
-			System.out.println("Error: File does not exist!");
 		}
+		System.out.println("The program has finished.");
 	}
 	
 	/**
