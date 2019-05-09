@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class Mapper extends Thread{
 	private ArrayList<String> list;
-	private Hashtable<String, Integer> table = new Hashtable<String, Integer>();
+	private TreeMap<String, Integer> table = new TreeMap<String, Integer>();
 	private String name;
 	private Thread thread;
 	
@@ -17,7 +17,7 @@ public class Mapper extends Thread{
 	}
 	
 	/**
-	 * Maps the arraylist to a hashtable
+	 * Maps the arraylist to a TreeMap
 	 */
 	public void map() {
 		for (String string : list) {
@@ -46,53 +46,18 @@ public class Mapper extends Thread{
 	 * @param t2 the second map (Chapter 2)
 	 * @param t3 the third map (Chapter 3)
 	 * @param t4 the fourth map (Chapter 4)
-	 * @return a hashtable containing the shuffled results of the four maps
+	 * @return a TreeMap containing the shuffled results of the four maps
 	 */
-	public static Hashtable<String, ArrayList<Integer>> shuffle(Hashtable<String, Integer> t1, Hashtable<String, Integer> t2, Hashtable<String, Integer> t3, Hashtable<String, Integer> t4){
-		//Create HashTable with ch1 in it
-		Hashtable<String, ArrayList<Integer>> shuffleTable = new Hashtable<String, ArrayList<Integer>>();
-		//Add chapter 1
-		t1.forEach((string, integer) -> {
-			ArrayList<Integer> arrayList = new ArrayList<>();
-			arrayList.add(t1.get(string));
-			shuffleTable.put(string, arrayList);
-		});
-		//Add chapter 2
-		t2.forEach((string, integer) -> {
-			if(shuffleTable.containsKey(string)) {
-				ArrayList<Integer> arrayList = shuffleTable.get(string);
-				arrayList.add(t2.get(string));
-				shuffleTable.put(string, arrayList);
-			} else {
+	public static TreeMap<String, ArrayList<Integer>> shuffle(ArrayList<TreeMap<String, Integer>> tableList){
+		//Create TreeMap with ch1 in it
+		TreeMap<String, ArrayList<Integer>> shuffleTable = new TreeMap<String, ArrayList<Integer>>();
+		for (TreeMap<String, Integer> TreeMap : tableList) {
+			TreeMap.forEach((string, integer) -> {
 				ArrayList<Integer> arrayList = new ArrayList<>();
-				arrayList.add(t2.get(string));
+				arrayList.add(TreeMap.get(string));
 				shuffleTable.put(string, arrayList);
-			}
-		});
-		//Add chapter 3
-		t3.forEach((string, integer) -> {
-			if(shuffleTable.containsKey(string)) {
-				ArrayList<Integer> arrayList = shuffleTable.get(string);
-				arrayList.add(t3.get(string));
-				shuffleTable.put(string, arrayList);
-			} else {
-				ArrayList<Integer> arrayList = new ArrayList<>();
-				arrayList.add(t3.get(string));
-				shuffleTable.put(string, arrayList);
-			}
-		});
-		//Add chapter 4
-		t4.forEach((string, integer) -> {
-			if(shuffleTable.containsKey(string)) {
-				ArrayList<Integer> arrayList = shuffleTable.get(string);
-				arrayList.add(t4.get(string));
-				shuffleTable.put(string, arrayList);
-			} else {
-				ArrayList<Integer> arrayList = new ArrayList<>();
-				arrayList.add(t4.get(string));
-				shuffleTable.put(string, arrayList);
-			}
-		});
+			});
+		}
 		return shuffleTable;
 	}
 	
@@ -113,10 +78,10 @@ public class Mapper extends Thread{
 	}
 
 	/**
-	 * Gets the hashtable the arraylist was mapped to
-	 * @return the hashtable the arraylist is mapped to
+	 * Gets the TreeMap the arraylist was mapped to
+	 * @return the TreeMap the arraylist is mapped to
 	 */
-	public Hashtable<String, Integer> getTable() {
+	public TreeMap<String, Integer> getTable() {
 		return table;
 	}
 	

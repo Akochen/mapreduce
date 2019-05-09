@@ -1,8 +1,8 @@
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class Reducer extends Thread{
-	private Hashtable<String, ArrayList<Integer>> tableToReduce = new Hashtable<>();
+	private TreeMap<String, ArrayList<Integer>> tableToReduce = new TreeMap<>();
 	private int num;
 	private String result = "";
 	private String name;
@@ -10,10 +10,10 @@ public class Reducer extends Thread{
 	
 	/**
 	 * Creates a reducer
-	 * @param input The hashtable to be reduced
+	 * @param input The TreeMap to be reduced
 	 * @param num The number of the reducer
 	 */
-	public Reducer(Hashtable<String, ArrayList<Integer>> input, int num) {
+	public Reducer(TreeMap<String, ArrayList<Integer>> input, int num) {
 		// TODO Auto-generated constructor stub
 		tableToReduce = input;
 		this.num = num;
@@ -30,7 +30,7 @@ public class Reducer extends Thread{
 	}
 	
 	/**
-	 * Gets the total values of each key in the hashtable
+	 * Gets the total values of each key in the TreeMap
 	 * @param arrayList The arraylist containing the values to be added together
 	 * @return all values added together
 	 */
@@ -49,7 +49,7 @@ public class Reducer extends Thread{
 	public String getResult() {return result;}
 	
 	public void start() {
-		System.out.println("Starting " + name);
+		System.out.println("\nStarting " + name);
 	    if ( thread == null){
 	        thread = new Thread (this, name);
 	        thread.start();
@@ -67,6 +67,7 @@ public class Reducer extends Thread{
 	public void run(){ //Runs the thread
         System.out.println("Running " + name);
 		generateResult();
+        System.out.println("Printing " + name);
 		System.out.println(result);
 		System.out.println(name + " has finished.");
     }

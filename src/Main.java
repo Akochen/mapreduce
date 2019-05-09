@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Scanner;
 
@@ -13,53 +15,17 @@ public class Main {
 		ArrayList<String> ch2 = readChapter(new File("src/mobydick2.txt"));
 		ArrayList<String> ch3 = readChapter(new File("src/mobydick3.txt"));
 		ArrayList<String> ch4 = readChapter(new File("src/mobydick4.txt"));
-		//Create mappers
-		Mapper ch1Map = new Mapper(ch1, 1);
-		Mapper ch2Map = new Mapper(ch2, 2);
-		Mapper ch3Map = new Mapper(ch3, 3);
-		Mapper ch4Map = new Mapper(ch4, 4);
-		ch1Map.start();
-		ch2Map.start();
-		ch3Map.start();
-		ch4Map.start();
-		try {
-			System.out.println("\nWaiting for mappers to finsih");
-			ch1Map.getThread().join();
-			ch2Map.getThread().join();
-			ch3Map.getThread().join();
-			ch4Map.getThread().join();
-		} catch (InterruptedException e) {
-			System.out.println("\nMapper join error");
-			e.printStackTrace();
-		}
-		//Shuffle maps
-		Hashtable<String, ArrayList<Integer>> shuffledTable = Mapper.shuffle(ch1Map.getTable(), ch2Map.getTable(), ch3Map.getTable(), ch4Map.getTable());
-		//Print out shuffled map
-		System.out.println("\nShuffled Map");
-		System.out.println(shuffledTable.toString());
-		//Create maps to reduce
-		Hashtable<String, ArrayList<Integer>> oddMap = new Hashtable<String, ArrayList<Integer>>();
-		Hashtable<String, ArrayList<Integer>> evenMap = new Hashtable<String, ArrayList<Integer>>();
-		shuffledTable.forEach((string, arrayList) -> {
-			if(string.hashCode()%2 == 1) {
-				oddMap.put(string, shuffledTable.get(string));
-			} else {
-				evenMap.put(string, shuffledTable.get(string));
-			}
-		});
-		//Create Reducers
-		Reducer reducer1 = new Reducer(oddMap, 1);
-		Reducer reducer2 = new Reducer(evenMap, 2);
-		reducer1.start();
-		reducer2.start();
-		try {
-			reducer1.getThread().join();
-			reducer2.getThread().join();
-		} catch (InterruptedException e) {
-			System.out.println("\nReducer join error");
-			e.printStackTrace();
-		}
-		System.out.println("The program has finished.");
+		ArrayList<ArrayList<String>> files = new ArrayList<>();
+		ch1.sort(String::compareTo);
+		ch2.sort(String::compareTo);
+		ch3.sort(String::compareTo);
+		ch4.sort(String::compareTo);
+		files.add(ch1);
+		files.add(ch2);
+		files.add(ch3);
+		files.add(ch4);
+		MapReduce mReduce = new MapReduce(files, 4, 2);
+		mReduce.MR_RUN();
 	}
 	
 	/**
